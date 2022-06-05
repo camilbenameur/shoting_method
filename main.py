@@ -20,8 +20,7 @@ dy1a=abs(ya-yb)/5 # Pas de tir, si la cible est manqué ou est inatteignable
 
 n= 1000 # Permet de définir le pas utilisé dans l'algorithme d'Euler h = (xb-xa)/n
 
-
-########################################################
+#####################################################################################
 
 
 def shot(f: Callable, xa: float, xb: float, ya: float, yb: float, dy1a: int, n: int):  # dy1a = m1-m0 /  n =
@@ -73,21 +72,19 @@ for i, tir in enumerate(tirs):
 
 # Nous traçons la droite passant par le point de départ du tir et la cible 
 
-x = np.linspace(list_m[0], list_m[-1], n*5, endpoint=True) # Axe des abcisses 
-x_droite = np.linspace(xa, xb, n*5, endpoint=True) #
+x = np.linspace(list_m[0], list_m[-1], n*5, endpoint=True) # Intervalle de définition [m0,...,mk] du polynôme interpolateur de Lagrange
+x_droite = np.linspace(xa, xb, n*5, endpoint=True) # on définit l'intervalle de définition [xa,xb] de la droite reliant (xa,ya) et (xb,yb)
 
 
 graph1.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red") 
 graph2.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red")
 
-#graph1.axis([xa-1/100, xb, 0, yb+(1/5)*yb]) # Recentre l'affichage du graphique
-#graph2.axis([xa-1/100, xb, 0, yb+(1/5)*yb])
 
 interpolation_m = lagrange(list_m, list_yb) # Polynôme de Lagrange avec noeuds: liste des m et image: liste des yb
 
 for k in x:
     try:
-        if np.around(interpolation_m(k),2) == np.around(yb,2):
+        if np.around(interpolation_m(k),2) == np.around(yb,2): # on cherche k tel que le polynôme est égal à yb au 100eme près
             best_y1a = k
     except Exception as e:
         print(e)
