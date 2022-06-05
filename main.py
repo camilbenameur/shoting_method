@@ -13,7 +13,7 @@ xa=0 # Position de la première condition initiale xa
 xb= pi/2 # Position de la seconde condition initiale xb
 
 ya=1 # Valeur de y(xa)
-yb=2 # Valeur de y(xb)
+yb=-2 # Valeur de y(xb)
 
 dy1a=1/5 # Pas de tir, si la cible est manqué ou est inatteignable 
 #modifier le pas de tir peut permettre l'obtention de meilleurs résultats
@@ -83,8 +83,8 @@ graph2.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c
 
 
 
-graph1.axis([xa-1/100, xb+1/10, 0, yb+ya]) # Recentre l'affichage du graphique
-
+graph1.axis([xa-1/100, xb+1/10, ya+(1/5)*ya, yb+(1/5)*yb]) # Recentre l'affichage du graphique
+graph2.axis([xa-1/100, xb+1/10, ya+(1/5)*ya, yb+(1/5)*yb])
 
 interpolation_m = lagrange(list_m, list_yb) # Polynôme de Lagrange avec noeuds: liste des m et image: liste des yb
 
@@ -95,7 +95,7 @@ try:
     print("La meilleure approximation de y'(b) est " + str(best_y1a))
 except Exception as e:
     print(e)
-    print("Essayez d'ajuster votre pas de tir")
+    print("Essayez d'ajuster votre pas de tir : dy1a")
 
 
 best_shot = Euler(f, xa, xb, ya, best_y1a, n)
