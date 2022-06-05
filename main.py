@@ -4,22 +4,21 @@ from matplotlib import markers, pyplot as plt
 from numpy import around
 from functions import *
 
-
-
 # Définition de l'équation et des conditions initiales
 
 def f(x, y, y1): # Équation différentielle, de la forme y''=f(x,y,y')
-    return -y     
+    return -y - (y*y)/100   
 
 xa=0 # Position de la première condition initiale xa
 xb= pi/2 # Position de la seconde condition initiale xb
 
 ya=1 # Valeur de y(xa)
-yb=1/2 # Valeur de y(xa)
+yb=2 # Valeur de y(xb)
 
-dy1a=1/2 # Pas de tir
+dy1a=1/5 # Pas de tir, si la cible est manqué ou est inatteignable 
+#modifier le pas de tir peut permettre l'obtention de meilleurs résultats
 
-n= 100 # Permet de définir le pas utilisé dans l'algorithme d'Euler h = (xb-xa)/n
+n= 1000 # Permet de définir le pas utilisé dans l'algorithme d'Euler h = (xb-xa)/n
 
 
 ########################################################
@@ -59,9 +58,6 @@ new_shot = shot(f, xa,xb, ya, yb, dy1a, n)
 tirs, list_m, list_yb, y1a = new_shot.values()
 
 
-x = np.linspace(xa, xb, n, endpoint=True) # Axe des abcisses 
-
-
 # Création avec matplotlib.pyplot de deux graphiques sur une même fenêtre
 
 
@@ -77,8 +73,12 @@ for i, tir in enumerate(tirs):
 
 # Nous traçons la droite passant par le point de départ du tir et la cible 
 
-graph1.plot(x, y1a*x + ya, label='Droite reliant les deux point',c="red") 
-graph2.plot(x, y1a*x + ya, label='Droite reliant les deux point',c="red")
+x = np.linspace(list_m[0], list_m[-1], n*5, endpoint=True) # Axe des abcisses 
+x_droite = np.linspace(xa, xb, n*5, endpoint=True)
+
+
+graph1.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red") 
+graph2.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red")
 
 
 
@@ -88,11 +88,14 @@ graph1.axis([xa-1/100, xb+1/10, 0, yb+ya]) # Recentre l'affichage du graphique
 
 interpolation_m = lagrange(list_m, list_yb) # Polynôme de Lagrange avec noeuds: liste des m et image: liste des yb
 
-for k in x:
-    if np.around(interpolation_m(k)) == np.around(yb):
-        best_y1a = k
-print("La meilleure approximation de y'(b) est " + str(best_y1a))
-
+try:
+    for k in x:
+        if np.around(interpolation_m(k),1) == np.around(yb,2):
+            best_y1a = k
+    print("La meilleure approximation de y'(b) est " + str(best_y1a))
+except Exception as e:
+    print(e)
+    print("Essayez d'ajuster votre pas de tir")
 
 
 best_shot = Euler(f, xa, xb, ya, best_y1a, n)
@@ -112,11 +115,11 @@ graph2.plot(best_shot["x_array"],best_shot["y_array"],label="Meilleur tir pour m
 
 # On place les points de départ et d'arrivée des tirs 
 
-graph1.scatter(xa,ya, c="red",label="Point de départ du tir en (xa,ya)")
-graph2.scatter(xa,ya, c="red",label="Point de départ du tir en (xa,ya)")
+graph1.scatter(xa,ya, c="red",label="Point de départ du tir en ("+str(np.around(xa,2))+","+str(np.around(ya,2))+")")
+graph2.scatter(xa,ya, c="red",label="Point de départ du tir en ("+str(np.around(xa,2))+","+str(np.around(ya,2))+")")
 
-graph1.scatter(xb,yb, c="red",marker="x",label="Cible en (xb,yb)")
-graph2.scatter(xb,yb, c="red",marker="x",label="Cible en (xb,yb)")
+graph1.scatter(xb,yb, c="red",marker="x",label="Cible en ("+str(np.around(xb,2))+","+str(np.around(yb,2))+")")
+graph2.scatter(xb,yb, c="red",marker="x",label="Cible en ("+str(np.around(xb,2))+","+str(np.around(yb,2))+")")
 
 # Affichage des légendes et des graphiques
 
