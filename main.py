@@ -7,15 +7,15 @@ from functions import *
 # Définition de l'équation et des conditions initiales
 
 def f(x, y, y1): # Équation différentielle, de la forme y''=f(x,y,y')
-    return -y - (y*y)/100   
+    return -y  
 
 xa=0 # Position de la première condition initiale xa
 xb= pi/2 # Position de la seconde condition initiale xb
 
 ya=1 # Valeur de y(xa)
-yb=-2 # Valeur de y(xb)
+yb=2 # Valeur de y(xb)
 
-dy1a=1/5 # Pas de tir, si la cible est manqué ou est inatteignable 
+dy1a=abs(ya-yb)/5 # Pas de tir, si la cible est manqué ou est inatteignable 
 #modifier le pas de tir peut permettre l'obtention de meilleurs résultats
 
 n= 1000 # Permet de définir le pas utilisé dans l'algorithme d'Euler h = (xb-xa)/n
@@ -74,29 +74,26 @@ for i, tir in enumerate(tirs):
 # Nous traçons la droite passant par le point de départ du tir et la cible 
 
 x = np.linspace(list_m[0], list_m[-1], n*5, endpoint=True) # Axe des abcisses 
-x_droite = np.linspace(xa, xb, n*5, endpoint=True)
+x_droite = np.linspace(xa, xb, n*5, endpoint=True) #
 
 
 graph1.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red") 
 graph2.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red")
 
-
-
-
-graph1.axis([xa-1/100, xb+1/10, ya+(1/5)*ya, yb+(1/5)*yb]) # Recentre l'affichage du graphique
-graph2.axis([xa-1/100, xb+1/10, ya+(1/5)*ya, yb+(1/5)*yb])
+#graph1.axis([xa-1/100, xb, 0, yb+(1/5)*yb]) # Recentre l'affichage du graphique
+#graph2.axis([xa-1/100, xb, 0, yb+(1/5)*yb])
 
 interpolation_m = lagrange(list_m, list_yb) # Polynôme de Lagrange avec noeuds: liste des m et image: liste des yb
 
-try:
-    for k in x:
-        if np.around(interpolation_m(k),1) == np.around(yb,2):
+for k in x:
+    try:
+        if np.around(interpolation_m(k),2) == np.around(yb,2):
             best_y1a = k
-    print("La meilleure approximation de y'(b) est " + str(best_y1a))
-except Exception as e:
-    print(e)
-    print("Essayez d'ajuster votre pas de tir : dy1a")
-
+    except Exception as e:
+        print(e)
+        print("Essayez d'ajuster votre pas de tir : dy1a")
+            
+            
 
 best_shot = Euler(f, xa, xb, ya, best_y1a, n)
 
@@ -125,6 +122,10 @@ graph2.scatter(xb,yb, c="red",marker="x",label="Cible en ("+str(np.around(xb,2))
 
 graph2.legend()
 graph1.legend()
+
+
+print('θ(m_k):' + str(np.around(list_yb, 2)))
+print("La meilleure approximation de y'(a) est " + str(best_y1a))
 
 plt.show()
 
