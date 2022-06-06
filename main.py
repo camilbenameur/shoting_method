@@ -7,13 +7,13 @@ from functions import *
 # Définition de l'équation et des conditions initiales
 
 def f(x, y, y1): # Équation différentielle, de la forme y''=f(x,y,y')
-    return -y  
+    return y+1
 
 xa=0 # Position de la première condition initiale xa
-xb= pi/2 # Position de la seconde condition initiale xb
+xb= 1 # Position de la seconde condition initiale xb
 
-ya=1 # Valeur de y(xa)
-yb=2 # Valeur de y(xb)
+ya=5 # Valeur de y(xa)
+yb=25 # Valeur de y(xb)
 
 dy1a=abs(ya-yb)/5 # Pas de tir, si la cible est manqué ou est inatteignable 
 #modifier le pas de tir peut permettre l'obtention de meilleurs résultats
@@ -31,7 +31,12 @@ def shot(f: Callable, xa: float, xb: float, ya: float, yb: float, dy1a: int, n: 
     list_m = []
     list_yb = []
 
-    if yb_shot < yb:  # on vérifie si le tir initial est trop court ou trop long
+    preshot1 = Euler(f, xa, xb, ya, y1, n)["yb"]
+    preshot2 = Euler(f, xa, xb, ya, y1+1/2, n)["yb"]
+    is_growing = preshot2-preshot1>=0
+
+
+    if yb_shot < yb and is_growing:  # on vérifie si le tir initial est trop court ou trop long
         while yb_shot < yb:  # on effectue des tirs par incrément tant que le tir
             #   est trop court en s'assurant de bien dépassé la cible
             new_shot = Euler(f, xa, xb, ya, y1, n)
@@ -40,7 +45,7 @@ def shot(f: Callable, xa: float, xb: float, ya: float, yb: float, dy1a: int, n: 
             list_yb.append(yb_shot)
             list_m.append(y1)
             y1 += dy1a  # On incrémente la valeur de mk
-    elif yb_shot > yb:
+    elif yb_shot > yb or not is_growing:
         while yb_shot > yb:
             new_shot = Euler(f, xa, xb, ya, y1, n)
             yb_shot = new_shot["yb"]
