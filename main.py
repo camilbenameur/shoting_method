@@ -1,4 +1,6 @@
 from math import pi
+import sys
+from types import NoneType
 from typing import Callable
 from matplotlib import markers, pyplot as plt
 from numpy import around
@@ -9,8 +11,8 @@ from functions import *
 def f(x, y, y1): # Équation différentielle, de la forme y''=f(x,y,y')
     return y+1
 
-xa=0 # Position de la première condition initiale xa
-xb= 1 # Position de la seconde condition initiale xb
+xa=1 # Position de la première condition initiale xa
+xb=2 # Position de la seconde condition initiale xb
 
 ya=5 # Valeur de y(xa)
 yb=25 # Valeur de y(xb)
@@ -81,19 +83,25 @@ x = np.linspace(list_m[0], list_m[-1], n*5, endpoint=True) # Intervalle de défi
 x_droite = np.linspace(xa, xb, n*5, endpoint=True) # on définit l'intervalle de définition [xa,xb] de la droite reliant (xa,ya) et (xb,yb)
 
 
-graph1.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red") 
-graph2.plot(x_droite, y1a*x_droite + ya, label='Droite reliant les deux point',c="red")
+graph1.plot(x_droite, y1a*(x_droite-xa) + ya, label='Droite reliant les deux point',c="red") 
+graph2.plot(x_droite, y1a*(x_droite-xa) + ya, label='Droite reliant les deux point',c="red")
 
 
 interpolation_m = lagrange(list_m, list_yb) # Polynôme de Lagrange avec noeuds: liste des m et image: liste des yb
 
-for k in x:
-    try:
+best_y1a=None
+try:
+    for k in x:
+    
         if np.around(interpolation_m(k),2) == np.around(yb,2): # on cherche k tel que le polynôme est égal à yb au 100eme près
             best_y1a = k
-    except Exception as e:
-        print(e)
-        print("Essayez d'ajuster votre pas de tir : dy1a")
+    
+    if type(best_y1a)==NoneType: raise Exception("Une erreur est survenue. Essayez d'ajuster vos paramètres.")
+
+except Exception as e:
+    print(e)
+    sys.exit()
+    
             
             
 
